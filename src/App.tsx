@@ -12,6 +12,7 @@ import { AmortizationTable } from './components/AmortizationTable';
 import { LoanAnalysis } from './components/LoanAnalysis';
 import { ExtraPaymentModal } from './components/ExtraPaymentModal';
 import { SimulationPersistence } from './components/SimulationPersistence';
+import { AdSpace } from './components/AdSpace';
 import { TrendingDown, PieChart, List, Wallet, Car, Home, User, Briefcase, Search } from 'lucide-react';
 import { LOAN_TEMPLATES } from './constants';
 import { getSimulationByCode } from './services/simulationService';
@@ -278,6 +279,8 @@ export default function App() {
             <SimulationPersistence 
               currentData={loanInput} 
             />
+
+            <AdSpace type="horizontal" className="mt-2" />
           </div>
 
           {!isSimulated ? (
@@ -291,6 +294,8 @@ export default function App() {
           ) : (
             <div className="flex flex-col gap-6 h-full">
               {simulatedInput && <LoanAnalysis input={simulatedInput} schedule={schedule} />}
+              
+              <AdSpace type="horizontal" className="hidden lg:flex" />
 
               <div className="flex flex-col gap-4 flex-1 overflow-hidden min-h-0">
                 <div className="flex items-center justify-between px-4 py-3 bg-white border border-border-base rounded-md">
@@ -313,6 +318,25 @@ export default function App() {
             </div>
           )}
         </main>
+
+        {/* Ad Sidebar (Desktop Only) */}
+        <aside className="hidden xl:flex w-[280px] bg-white border-l border-border-base p-6 overflow-y-auto flex-col gap-6">
+          <div className="flex flex-col gap-2 mb-2">
+            <h2 className="text-sm font-bold text-text-main uppercase tracking-tight">Oportunidades</h2>
+            <p className="text-[10px] text-text-muted leading-tight">
+              Basado en tu perfil de inversión actual.
+            </p>
+          </div>
+          
+          <AdSpace type="sidebar" />
+          
+          <div className="bg-primary/5 rounded-xl p-4 border border-primary/10">
+            <h4 className="text-xs font-bold text-primary mb-1">Tip de Ahorro</h4>
+            <p className="text-[10px] text-primary/70 leading-relaxed font-medium">
+              Amortizar durante los primeros 5 años de una hipoteca reduce drásticamente el interés total pagado.
+            </p>
+          </div>
+        </aside>
       </div>
 
       {/* Modals */}
