@@ -5,28 +5,40 @@
       "description": "A saved loan simulation",
       "type": "object",
       "properties": {
-        "id": { "type": "string" },
-        "amount": { "type": "number" },
-        "annualInterestRate": { "type": "number" },
-        "termMonths": { "type": "number" },
-        "openingFeeType": { "type": "string", "enum": ["percent", "fixed"] },
-        "openingFeeValue": { "type": "number" },
-        "isOpeningFeeFinanced": { "type": "boolean" },
-        "insuranceSinglePremium": { "type": "number" },
-        "isInsuranceFinanced": { "type": "boolean" },
-        "recurringMonthlyCosts": { "type": "number" },
-        "userProvidedApr": { "type": "number" },
-        "startDate": { "type": "string" },
-        "shortCode": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "amount": { "type": "number", "description": "Loan amount" },
+        "annualInterestRate": { "type": "number", "description": "Annual nominal interest rate" },
+        "termMonths": { "type": "number", "description": "Loan term in months" },
+        "startDate": { "type": "string", "description": "Start date of the loan" },
+        "openingFeeType": { "type": "string", "enum": ["percent", "fixed"], "description": "Type of opening fee" },
+        "openingFeeValue": { "type": "number", "description": "Value of the opening fee" },
+        "isOpeningFeeFinanced": { "type": "boolean", "description": "Whether the opening fee is financed" },
+        "insuranceSinglePremium": { "type": "number", "description": "Single premium insurance amount" },
+        "isInsuranceFinanced": { "type": "boolean", "description": "Whether the insurance is financed" },
+        "recurringMonthlyCosts": { "type": "number", "description": "Other recurring monthly costs" },
+        "userProvidedApr": { "type": "number", "description": "APR provided by the user" },
+        "id": { "type": "string", "description": "Unique identifier" },
+        "shortCode": { "type": "string", "description": "Short code for sharing" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "expiresAt": { "type": "string", "format": "date-time", "description": "Expiration timestamp (7 days after creation)" }
       },
-      "required": ["amount", "annualInterestRate", "termMonths", "shortCode", "createdAt"]
+      "required": [
+        "amount",
+        "annualInterestRate",
+        "termMonths",
+        "startDate",
+        "openingFeeType",
+        "openingFeeValue",
+        "id",
+        "shortCode",
+        "createdAt",
+        "expiresAt"
+      ]
     }
   },
   "firestore": {
-    "/simulations/{simulationId}": {
+    "simulations/{simulationId}": {
       "schema": "Simulation",
-      "description": "Collection of saved loan simulations"
+      "description": "Collection of loan simulations"
     }
   }
 }

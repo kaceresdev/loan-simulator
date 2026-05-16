@@ -1,6 +1,7 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Default deny
     match /{document=**} {
       allow read, write: if false;
     }
@@ -9,19 +10,45 @@ service cloud.firestore {
       return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
     }
 
+    function incoming() {
+      return request.resource.data;
+    }
+
     function isValidSimulation(data) {
-      return data.amount is number && 
-             data.annualInterestRate is number && 
-             data.termMonths is number &&
-             data.shortCode is string &&
-             data.shortCode.size() <= 10 &&
-             data.createdAt is timestamp;
+      let requiredKeys = ['amount', 'annualInterestRate', 'termMonths', 'startDate', 'openingFeeType', 'openingFeeValue', 'isOpeningFeeFinanced', 'insuranceSinglePremium', 'isInsuranceFinanced', 'recurringMonthlyCosts', 'id', 'shortCode', 'createdAt', 'expiresAt'];
+      return data.keys().hasAll(requiredKeys)
+        && data.keys().size() >= 14 && data.keys().size() <= 15
+        && data.amount is number && data.amount > 0
+        && data.annualInterestRate is number
+        && data.termMonths is number && data.termMonths > 0
+        && data.startDate is string && data.startDate.size() <= 64
+        && data.openingFeeType in ['percent', 'fixed']
+        && data.openingFeeValue is number
+        && data.isOpeningFeeFinanced is bool
+        && data.insuranceSinglePremium is number
+        && data.isInsuranceFinanced is bool
+        && data.recurringMonthlyCosts is number
+        && (data.get('userProvidedApr', 0) is number)
+        && data.id is string && data.id.size() <= 128
+        && data.shortCode is string && data.shortCode.size() == 6 && data.shortCode.matches('^[A-Z0-9]+$')
+        && data.createdAt == request.time
+        && data.expiresAt >= data.createdAt + duration.value(6, 'd')
+        && data.expiresAt <= data.createdAt + duration.value(8, 'd');
     }
 
     match /simulations/{simulationId} {
-      allow read: if true; // Publicly readable by code
-      allow create: if isValidSimulation(request.resource.data);
-      allow update, delete: if false; // Once saved, it's immutable for now
+      function isNotExpired() {
+        return request.time < resource.data.expiresAt;
+      }
+
+      allow get: if isNotExpired();
+      allow list: if isNotExpired();
+      
+      allow create: if isValidId(simulationId) 
+        && isValidSimulation(incoming()) 
+        && incoming().id == simulationId;
+      
+      allow update, delete: if false; // Once shared, it's immutable
     }
   }
 }

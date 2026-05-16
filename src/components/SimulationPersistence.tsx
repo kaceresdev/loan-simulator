@@ -57,6 +57,9 @@ export function SimulationPersistence({ currentData }: { currentData: LoanInput 
               </>
             )}
           </button>
+          <p className="text-[10px] text-text-muted text-center italic">
+            Las simulaciones guardadas expiran en 7 días
+          </p>
           {error && <p className="text-xs text-red-500 font-medium text-center">{error}</p>}
         </div>
       ) : (

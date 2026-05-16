@@ -1,10 +1,10 @@
 {
-  "projectId": "sierah-landing",
-  "appId": "1:702904843651:web:8f8edad069f36261f7cab6",
-  "apiKey": "AIzaSyBfHP0NHtu8lT_lFTLV8ge7AKxPWJRm8nY",
-  "authDomain": "sierah-landing.firebaseapp.com",
+  "projectId": "loansimulator-web",
+  "appId": "1:936015536908:web:39776626914b43d9665f29",
+  "apiKey": "AIzaSyD_AEgLtNz_Lmn4dZnj6ijf2NeRDnMiv4A",
+  "authDomain": "loansimulator-web.firebaseapp.com",
   "firestoreDatabaseId": "ai-studio-acd062f8-12a6-43f3-9c3b-aad1f5dd0d3e",
-  "storageBucket": "sierah-landing.firebasestorage.app",
-  "messagingSenderId": "702904843651",
+  "storageBucket": "loansimulator-web.firebasestorage.app",
+  "messagingSenderId": "936015536908",
   "measurementId": ""
 }
