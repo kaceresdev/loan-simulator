@@ -1,0 +1,32 @@
+{
+  "entities": {
+    "Simulation": {
+      "title": "Simulation",
+      "description": "A saved loan simulation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "amount": { "type": "number" },
+        "annualInterestRate": { "type": "number" },
+        "termMonths": { "type": "number" },
+        "openingFeeType": { "type": "string", "enum": ["percent", "fixed"] },
+        "openingFeeValue": { "type": "number" },
+        "isOpeningFeeFinanced": { "type": "boolean" },
+        "insuranceSinglePremium": { "type": "number" },
+        "isInsuranceFinanced": { "type": "boolean" },
+        "recurringMonthlyCosts": { "type": "number" },
+        "userProvidedApr": { "type": "number" },
+        "startDate": { "type": "string" },
+        "shortCode": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["amount", "annualInterestRate", "termMonths", "shortCode", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/simulations/{simulationId}": {
+      "schema": "Simulation",
+      "description": "Collection of saved loan simulations"
+    }
+  }
+}

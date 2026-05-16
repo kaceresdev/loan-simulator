@@ -1,0 +1,6 @@
+{
+  "name": "PrestaSmart - Simulador de Préstamos",
+  "description": "Un simulador de préstamos avanzado con amortizaciones parciales, tabla de vencimientos completa y análisis inteligente de condiciones mediante IA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

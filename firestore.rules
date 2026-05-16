@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidSimulation(data) {
+      return data.amount is number && 
+             data.annualInterestRate is number && 
+             data.termMonths is number &&
+             data.shortCode is string &&
+             data.shortCode.size() <= 10 &&
+             data.createdAt is timestamp;
+    }
+
+    match /simulations/{simulationId} {
+      allow read: if true; // Publicly readable by code
+      allow create: if isValidSimulation(request.resource.data);
+      allow update, delete: if false; // Once saved, it's immutable for now
+    }
+  }
+}
