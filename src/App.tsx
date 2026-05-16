@@ -30,6 +30,7 @@ export default function App() {
   const isSimulated = !!simulatedInput;
 
   const [headerMessage, setHeaderMessage] = useState<string | null>(null);
+  const [loadedUser, setLoadedUser] = useState<{ name: string; email: string } | null>(null);
 
   const handleHeaderSearch = async (code: string) => {
     if (!code) return;
@@ -37,9 +38,10 @@ export default function App() {
     try {
       const data = await getSimulationByCode(code);
       if (data) {
-        const { id, shortCode, createdAt, ...rest } = data;
+        const { id, shortCode, createdAt, expiresAt, userName, userEmail, ...rest } = data;
         setLoanInput(rest as LoanInput);
         setSimulatedInput(rest as LoanInput);
+        setLoadedUser({ name: userName, email: userEmail });
         window.history.pushState({}, '', `?code=${code.toUpperCase()}`);
       } else {
         setHeaderMessage('No encontrado');
@@ -57,9 +59,10 @@ export default function App() {
     if (code) {
       getSimulationByCode(code).then(data => {
         if (data) {
-          const { id, shortCode, createdAt, ...rest } = data;
+          const { id, shortCode, createdAt, expiresAt, userName, userEmail, ...rest } = data;
           setLoanInput(rest as LoanInput);
           setSimulatedInput(rest as LoanInput);
+          setLoadedUser({ name: userName, email: userEmail });
         }
       });
     }
@@ -160,7 +163,9 @@ export default function App() {
         </div>
         <div className="hidden sm:flex items-center gap-8">
           <div className="flex flex-col items-end gap-1">
-            <span className="text-[10px] text-text-muted font-bold uppercase tracking-wider">¿Tienes un código de simulación?</span>
+            <span className="text-[10px] text-text-muted font-bold uppercase tracking-wider">
+              {loadedUser ? '¿Tienes otra simulación guardada?' : '¿Tienes un código de simulación?'}
+            </span>
             <div className="flex items-center">
               <input
                 type="text"
@@ -195,16 +200,24 @@ export default function App() {
               </motion.div>
             )}
           </div>
-          <div className="h-10 w-[1px] bg-border-base" />
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs ring-2 ring-white">
-              JD
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-bold text-text-main leading-tight">Juan Pérez</span>
-              <span className="text-[10px] text-text-muted leading-tight uppercase font-medium">demo_investor</span>
-            </div>
-          </div>
+          {loadedUser && (
+            <>
+              <div className="h-10 w-[1px] bg-border-base" />
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs ring-2 ring-white">
+                  {loadedUser.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-text-main leading-tight">
+                    {loadedUser.name}
+                  </span>
+                  <span className="text-[10px] text-text-muted leading-tight uppercase font-medium">
+                    {loadedUser.email.split('@')[0]}
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </header>
 
@@ -240,6 +253,7 @@ export default function App() {
 
           <SimulationPersistence 
             currentData={loanInput} 
+            onSaveSuccess={(name, email) => setLoadedUser({ name, email })}
           />
           
           {isSimulated && (
@@ -278,6 +292,7 @@ export default function App() {
 
             <SimulationPersistence 
               currentData={loanInput} 
+              onSaveSuccess={(name, email) => setLoadedUser({ name, email })}
             />
 
             <AdSpace type="horizontal" className="mt-2" />

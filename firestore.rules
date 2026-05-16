@@ -15,9 +15,9 @@ service cloud.firestore {
     }
 
     function isValidSimulation(data) {
-      let requiredKeys = ['amount', 'annualInterestRate', 'termMonths', 'startDate', 'openingFeeType', 'openingFeeValue', 'isOpeningFeeFinanced', 'insuranceSinglePremium', 'isInsuranceFinanced', 'recurringMonthlyCosts', 'id', 'shortCode', 'createdAt', 'expiresAt'];
+      let requiredKeys = ['amount', 'annualInterestRate', 'termMonths', 'startDate', 'openingFeeType', 'openingFeeValue', 'isOpeningFeeFinanced', 'insuranceSinglePremium', 'isInsuranceFinanced', 'recurringMonthlyCosts', 'id', 'shortCode', 'createdAt', 'expiresAt', 'userName', 'userEmail'];
       return data.keys().hasAll(requiredKeys)
-        && data.keys().size() >= 14 && data.keys().size() <= 15
+        && data.keys().size() >= 16 && data.keys().size() <= 17
         && data.amount is number && data.amount > 0
         && data.annualInterestRate is number
         && data.termMonths is number && data.termMonths > 0
@@ -28,6 +28,8 @@ service cloud.firestore {
         && data.insuranceSinglePremium is number
         && data.isInsuranceFinanced is bool
         && data.recurringMonthlyCosts is number
+        && data.userName is string && data.userName.size() >= 2 && data.userName.size() <= 100
+        && data.userEmail is string && data.userEmail.size() >= 5 && data.userEmail.size() <= 100 && data.userEmail.matches('^.+@.+$')
         && (data.get('userProvidedApr', 0) is number)
         && data.id is string && data.id.size() <= 128
         && data.shortCode is string && data.shortCode.size() == 6 && data.shortCode.matches('^[A-Z0-9]+$')
@@ -38,11 +40,11 @@ service cloud.firestore {
 
     match /simulations/{simulationId} {
       function isNotExpired() {
-        return request.time < resource.data.expiresAt;
+        return resource == null || request.time < resource.data.expiresAt;
       }
 
       allow get: if isNotExpired();
-      allow list: if isNotExpired();
+      allow list: if false; // No longer needed
       
       allow create: if isValidId(simulationId) 
         && isValidSimulation(incoming()) 

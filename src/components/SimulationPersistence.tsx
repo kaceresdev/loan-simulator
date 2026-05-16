@@ -6,21 +6,31 @@ import { LoanInput } from '../types';
 
 interface SimulationPersistenceProps {
   currentData: LoanInput;
-  onLoad: (data: LoanInput) => void;
+  onSaveSuccess?: (name: string, email: string) => void;
 }
 
-export function SimulationPersistence({ currentData }: { currentData: LoanInput }) {
+export function SimulationPersistence({ currentData, onSaveSuccess }: SimulationPersistenceProps) {
   const [savedCode, setSavedCode] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [userData, setUserData] = useState({ name: '', email: '' });
 
-  const handleSave = async () => {
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userData.name || !userData.email) {
+      setError('Por favor, completa todos los campos');
+      return;
+    }
+
     setIsSaving(true);
     setError(null);
     try {
-      const newCode = await saveSimulation(currentData);
+      const newCode = await saveSimulation(currentData, userData.name, userData.email);
       setSavedCode(newCode);
+      setShowForm(false);
+      onSaveSuccess?.(userData.name, userData.email);
     } catch (err) {
       console.error(err);
       setError('Error al guardar la simulación');
@@ -43,20 +53,56 @@ export function SimulationPersistence({ currentData }: { currentData: LoanInput 
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
       {!savedCode ? (
         <div className="flex flex-col gap-2">
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark shadow-sm transition-all"
-          >
-            {isSaving ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <>
-                <Save className="w-4 h-4" />
-                Guardar Simulación
-              </>
-            )}
-          </button>
+          {!showForm ? (
+            <button
+              onClick={() => setShowForm(true)}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark shadow-sm transition-all"
+            >
+              <Save className="w-4 h-4" />
+              Guardar Simulación
+            </button>
+          ) : (
+            <form onSubmit={handleSave} className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2">
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-text-muted uppercase">Nombre</label>
+                <input
+                  type="text"
+                  required
+                  value={userData.name}
+                  onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+                  className="px-3 py-2 text-xs border border-border-base rounded bg-slate-50 focus:ring-2 focus:ring-primary/10 outline-none"
+                  placeholder="Tu nombre"
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-text-muted uppercase">Email</label>
+                <input
+                  type="email"
+                  required
+                  value={userData.email}
+                  onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                  className="px-3 py-2 text-xs border border-border-base rounded bg-slate-50 focus:ring-2 focus:ring-primary/10 outline-none"
+                  placeholder="tu@email.com"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="flex-1 px-3 py-2 text-xs font-bold text-text-muted hover:bg-slate-50 rounded"
+                >
+                  CANCELAR
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-primary text-white text-xs font-bold rounded hover:bg-primary-dark transition-all disabled:opacity-50"
+                >
+                  {isSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : 'CONFIRMAR'}
+                </button>
+              </div>
+            </form>
+          )}
           <p className="text-[10px] text-text-muted text-center italic">
             Las simulaciones guardadas expiran en 7 días
           </p>

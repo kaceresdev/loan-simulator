@@ -19,7 +19,9 @@
         "id": { "type": "string", "description": "Unique identifier" },
         "shortCode": { "type": "string", "description": "Short code for sharing" },
         "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
-        "expiresAt": { "type": "string", "format": "date-time", "description": "Expiration timestamp (7 days after creation)" }
+        "expiresAt": { "type": "string", "format": "date-time", "description": "Expiration timestamp (7 days after creation)" },
+        "userName": { "type": "string", "description": "Name of the user" },
+        "userEmail": { "type": "string", "description": "Email of the user" }
       },
       "required": [
         "amount",
@@ -31,7 +33,9 @@
         "id",
         "shortCode",
         "createdAt",
-        "expiresAt"
+        "expiresAt",
+        "userName",
+        "userEmail"
       ]
     }
   },

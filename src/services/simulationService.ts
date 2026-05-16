@@ -7,6 +7,8 @@ export interface SavedSimulation extends LoanInput {
   shortCode: string;
   createdAt: Timestamp;
   expiresAt: Timestamp;
+  userName: string;
+  userEmail: string;
 }
 
 enum OperationType {
@@ -56,9 +58,9 @@ function generateShortCode(): string {
   return result;
 }
 
-export async function saveSimulation(data: LoanInput): Promise<string> {
+export async function saveSimulation(data: LoanInput, userName: string, userEmail: string): Promise<string> {
   const shortCode = generateShortCode();
-  const id = doc(collection(db, 'simulations')).id;
+  const id = shortCode; // Use shortCode as document ID
   const path = `simulations/${id}`;
   
   try {
@@ -69,6 +71,8 @@ export async function saveSimulation(data: LoanInput): Promise<string> {
       ...data,
       id,
       shortCode,
+      userName,
+      userEmail,
       createdAt: serverTimestamp(),
       expiresAt: Timestamp.fromDate(expiresAt),
     };
@@ -82,16 +86,16 @@ export async function saveSimulation(data: LoanInput): Promise<string> {
 }
 
 export async function getSimulationByCode(code: string): Promise<SavedSimulation | null> {
-  const path = 'simulations';
+  const shortCode = code.toUpperCase();
+  const path = `simulations/${shortCode}`;
   try {
-    const q = query(collection(db, path), where('shortCode', '==', code.toUpperCase()));
-    const querySnapshot = await getDocs(q);
+    const docSnap = await getDoc(doc(db, 'simulations', shortCode));
     
-    if (querySnapshot.empty) {
+    if (!docSnap.exists()) {
       return null;
     }
 
-    const docData = querySnapshot.docs[0].data() as SavedSimulation;
+    const docData = docSnap.data() as SavedSimulation;
     
     // Safety check in code (Rules already prevent this)
     if (docData.expiresAt && docData.expiresAt.toDate() < new Date()) {
@@ -100,7 +104,7 @@ export async function getSimulationByCode(code: string): Promise<SavedSimulation
 
     return docData;
   } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, path);
+    handleFirestoreError(error, OperationType.GET, path);
     return null; // unreachable
   }
 }
