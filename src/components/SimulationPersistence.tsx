@@ -6,10 +6,11 @@ import { LoanInput } from '../types';
 
 interface SimulationPersistenceProps {
   currentData: LoanInput;
+  activeTab: string;
   onSaveSuccess?: (name: string, email: string) => void;
 }
 
-export function SimulationPersistence({ currentData, onSaveSuccess }: SimulationPersistenceProps) {
+export function SimulationPersistence({ currentData, activeTab, onSaveSuccess }: SimulationPersistenceProps) {
   const [savedCode, setSavedCode] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +28,7 @@ export function SimulationPersistence({ currentData, onSaveSuccess }: Simulation
     setIsSaving(true);
     setError(null);
     try {
-      const newCode = await saveSimulation(currentData, userData.name, userData.email);
+      const newCode = await saveSimulation({ ...currentData, loanType: activeTab }, userData.name, userData.email);
       setSavedCode(newCode);
       setShowForm(false);
       onSaveSuccess?.(userData.name, userData.email);

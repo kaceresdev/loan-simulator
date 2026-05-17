@@ -15,6 +15,7 @@ export interface LoanInput {
   isInsuranceFinanced: boolean;
   recurringMonthlyCosts: number;
   userProvidedApr?: number;
+  loanType?: string;
 }
 
 export type ExtraPaymentType = 'partial' | 'total';

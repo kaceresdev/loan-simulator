@@ -78,6 +78,7 @@ export async function saveSimulation(data: LoanInput, userName: string, userEmai
       insuranceSinglePremium: Number(data.insuranceSinglePremium) || 0,
       isInsuranceFinanced: Boolean(data.isInsuranceFinanced),
       recurringMonthlyCosts: Number(data.recurringMonthlyCosts) || 0,
+      loanType: data.loanType || '',
       ...(data.userProvidedApr !== undefined && { userProvidedApr: Number(data.userProvidedApr) }),
       id,
       shortCode,

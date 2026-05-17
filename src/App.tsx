@@ -13,7 +13,7 @@ import { LoanAnalysis } from './components/LoanAnalysis';
 import { ExtraPaymentModal } from './components/ExtraPaymentModal';
 import { SimulationPersistence } from './components/SimulationPersistence';
 import { AdSpace } from './components/AdSpace';
-import { TrendingDown, PieChart, List, Wallet, Car, Home, User, Briefcase, Search } from 'lucide-react';
+import { TrendingDown, PieChart, List, Wallet, Car, Home, User, Briefcase, Search, Loader2 } from 'lucide-react';
 import { LOAN_TEMPLATES } from './constants';
 import { getSimulationByCode } from './services/simulationService';
 
@@ -30,17 +30,24 @@ export default function App() {
   const isSimulated = !!simulatedInput;
 
   const [headerMessage, setHeaderMessage] = useState<string | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [searchCode, setSearchCode] = useState('');
   const [loadedUser, setLoadedUser] = useState<{ name: string; email: string } | null>(null);
 
   const handleHeaderSearch = async (code: string) => {
     if (!code) return;
+    setSearching(true);
+    setSearchCode('');
     setHeaderMessage(null);
     try {
       const data = await getSimulationByCode(code);
       if (data) {
-        const { id, shortCode, createdAt, expiresAt, userName, userEmail, ...rest } = data;
+        const { id, shortCode, createdAt, expiresAt, userName, userEmail, loanType, ...rest } = data;
         setLoanInput(rest as LoanInput);
         setSimulatedInput(rest as LoanInput);
+        if (loanType && LOAN_TEMPLATES[loanType]) {
+          setActiveTab(loanType);
+        }
         setLoadedUser({ name: userName, email: userEmail });
         window.history.pushState({}, '', `?code=${code.toUpperCase()}`);
       } else {
@@ -50,6 +57,8 @@ export default function App() {
     } catch (err) {
       setHeaderMessage('Error');
       setTimeout(() => setHeaderMessage(null), 3000);
+    } finally {
+      setSearching(false);
     }
   };
 
@@ -57,13 +66,19 @@ export default function App() {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     if (code) {
+      setSearching(true);
       getSimulationByCode(code).then(data => {
         if (data) {
-          const { id, shortCode, createdAt, expiresAt, userName, userEmail, ...rest } = data;
+          const { id, shortCode, createdAt, expiresAt, userName, userEmail, loanType, ...rest } = data;
           setLoanInput(rest as LoanInput);
           setSimulatedInput(rest as LoanInput);
+          if (loanType && LOAN_TEMPLATES[loanType]) {
+            setActiveTab(loanType);
+          }
           setLoadedUser({ name: userName, email: userEmail });
         }
+      }).finally(() => {
+        setSearching(false);
       });
     }
   }, []);
@@ -166,10 +181,12 @@ export default function App() {
             <span className="text-[10px] text-text-muted font-bold uppercase tracking-wider">
               {loadedUser ? '¿Tienes otra simulación guardada?' : '¿Tienes un código de simulación?'}
             </span>
-            <div className="flex items-center">
+            <div className="flex items-center relative">
               <input
                 type="text"
                 placeholder="Ej: ABC123"
+                value={searchCode}
+                onChange={(e) => setSearchCode(e.target.value.toUpperCase())}
                 className={`w-40 h-9 px-3 text-sm border rounded-l-md focus:ring-2 focus:ring-primary/10 focus:border-primary outline-none transition-all uppercase font-mono ${
                   headerMessage ? 'border-red-300 bg-red-50' : 'border-border-base bg-slate-50'
                 }`}
@@ -178,16 +195,19 @@ export default function App() {
                     handleHeaderSearch((e.target as HTMLInputElement).value);
                   }
                 }}
+                disabled={searching}
               />
               <button 
-                onClick={(e) => {
-                  const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                  if (input) handleHeaderSearch(input.value);
-                }}
-                className="h-9 px-3 bg-primary text-white text-[10px] font-bold rounded-r-md hover:bg-primary-hover transition-colors flex items-center gap-1.5"
+                onClick={() => handleHeaderSearch(searchCode)}
+                disabled={searching || !searchCode}
+                className="h-9 px-3 bg-primary text-white text-[10px] font-bold rounded-r-md hover:bg-primary-hover transition-colors flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Search className="w-3.5 h-3.5" />
-                ABRIR
+                {searching ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Search className="w-3.5 h-3.5" />
+                )}
+                {searching ? 'BUSCANDO...' : 'ABRIR'}
               </button>
             </div>
             {headerMessage && (
@@ -253,6 +273,7 @@ export default function App() {
 
           <SimulationPersistence 
             currentData={loanInput} 
+            activeTab={activeTab}
             onSaveSuccess={(name, email) => setLoadedUser({ name, email })}
           />
           
@@ -292,6 +313,7 @@ export default function App() {
 
             <SimulationPersistence 
               currentData={loanInput} 
+              activeTab={activeTab}
               onSaveSuccess={(name, email) => setLoadedUser({ name, email })}
             />
 
