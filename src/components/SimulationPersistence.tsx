@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, Search, QrCode, Copy, Check, Loader2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { saveSimulation, getSimulationByCode } from '../services/simulationService';
@@ -6,17 +6,25 @@ import { LoanInput } from '../types';
 
 interface SimulationPersistenceProps {
   currentData: LoanInput;
+  simulatedData?: LoanInput | null;
   activeTab: string;
   onSaveSuccess?: (name: string, email: string) => void;
 }
 
-export function SimulationPersistence({ currentData, activeTab, onSaveSuccess }: SimulationPersistenceProps) {
+export function SimulationPersistence({ currentData, simulatedData, activeTab, onSaveSuccess }: SimulationPersistenceProps) {
   const [savedCode, setSavedCode] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [userData, setUserData] = useState({ name: '', email: '' });
+
+  // Reset saved status when loan data, simulated result, or tab changes
+  useEffect(() => {
+    if (savedCode) {
+      setSavedCode(null);
+    }
+  }, [currentData, simulatedData, activeTab]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

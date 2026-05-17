@@ -122,7 +122,7 @@ export default function App() {
   }, [simulatedInput, extraPayments]);
 
   const handleSimulate = () => {
-    setSimulatedInput(loanInput);
+    setSimulatedInput({ ...loanInput });
   };
 
   const handleTabChange = (tabId: string) => {
@@ -273,6 +273,7 @@ export default function App() {
 
           <SimulationPersistence 
             currentData={loanInput} 
+            simulatedData={simulatedInput}
             activeTab={activeTab}
             onSaveSuccess={(name, email) => setLoadedUser({ name, email })}
           />
@@ -313,6 +314,7 @@ export default function App() {
 
             <SimulationPersistence 
               currentData={loanInput} 
+              simulatedData={simulatedInput}
               activeTab={activeTab}
               onSaveSuccess={(name, email) => setLoadedUser({ name, email })}
             />
