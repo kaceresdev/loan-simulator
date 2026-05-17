@@ -3,7 +3,7 @@
   "appId": "1:936015536908:web:39776626914b43d9665f29",
   "apiKey": "AIzaSyD_AEgLtNz_Lmn4dZnj6ijf2NeRDnMiv4A",
   "authDomain": "loansimulator-web.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-acd062f8-12a6-43f3-9c3b-aad1f5dd0d3e",
+  "firestoreDatabaseId": "(default)",
   "storageBucket": "loansimulator-web.firebasestorage.app",
   "messagingSenderId": "936015536908",
   "measurementId": ""

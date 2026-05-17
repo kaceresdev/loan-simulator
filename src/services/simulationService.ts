@@ -68,11 +68,21 @@ export async function saveSimulation(data: LoanInput, userName: string, userEmai
     const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     const simulationData = {
-      ...data,
+      amount: Number(data.amount) || 0,
+      annualInterestRate: Number(data.annualInterestRate) || 0,
+      termMonths: Math.max(1, Math.floor(Number(data.termMonths) || 1)),
+      startDate: String(data.startDate || new Date().toISOString().split('T')[0]),
+      openingFeeType: data.openingFeeType === 'fixed' ? 'fixed' : 'percent',
+      openingFeeValue: Number(data.openingFeeValue) || 0,
+      isOpeningFeeFinanced: Boolean(data.isOpeningFeeFinanced),
+      insuranceSinglePremium: Number(data.insuranceSinglePremium) || 0,
+      isInsuranceFinanced: Boolean(data.isInsuranceFinanced),
+      recurringMonthlyCosts: Number(data.recurringMonthlyCosts) || 0,
+      ...(data.userProvidedApr !== undefined && { userProvidedApr: Number(data.userProvidedApr) }),
       id,
       shortCode,
-      userName,
-      userEmail,
+      userName: String(userName || 'Anónimo').substring(0, 100),
+      userEmail: String(userEmail || '').substring(0, 100),
       createdAt: serverTimestamp(),
       expiresAt: Timestamp.fromDate(expiresAt),
     };

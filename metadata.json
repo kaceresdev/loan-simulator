@@ -1,6 +1,8 @@
 {
-  "name": "PrestaSmart - Simulador de Préstamos",
-  "description": "Un simulador de préstamos avanzado con amortizaciones parciales, tabla de vencimientos completa y análisis inteligente de condiciones mediante IA.",
+  "name": "LoanSimulator - Simulador de Préstamos",
+  "description": "Simulador de préstamos avanzado con tabla de amortización, seguros, comisiones y persistencia en Firestore.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
