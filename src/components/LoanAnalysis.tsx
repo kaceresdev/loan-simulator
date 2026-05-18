@@ -54,48 +54,49 @@ export const LoanAnalysis: React.FC<LoanAnalysisProps> = ({ input, schedule }) =
   
   const stats = calculateLoanScore(input, totalInterest + totalHiddenCost); // include hidden costs in objective rating
 
-  useEffect(() => {
-    const fetchAiAnalysis = async () => {
-      if (!process.env.GEMINI_API_KEY) return;
+  // TODO: Revisar integración con IA
+  // useEffect(() => {
+  //   const fetchAiAnalysis = async () => {
+  //     if (!process.env.GEMINI_API_KEY) return;
       
-      setLoading(true);
-      try {
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-        const response = await ai.models.generateContent({
-          model: "gemini-3-flash-preview",
-          contents: `Analiza este préstamo considerando nuestra valoración de ${stats.score}/100.
+  //     setLoading(true);
+      // try {
+      //   // const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      //   // const response = await ai.models.generateContent({
+      //   //   model: "gemini-3-flash-preview",
+      //   //   contents: `Analiza este préstamo considerando nuestra valoración de ${stats.score}/100.
           
-          Datos:
-          Capital solicitado: ${formatCurrency(input.amount)}
-          Financiado (Apertura/Seguro): ${formatCurrency(financedAmount)}
-          Cuota Base Préstamo: ${formatCurrency(baseMonthlyPayment)}
-          Gastos Mensuales (Seguros/Mant.): ${formatCurrency(input.recurringMonthlyCosts + additionalCostsFromApr)}/mes
-          Cuota Mensual Total: ${formatCurrency(totalEffectiveMonthly)}
-          TAE: ${bankApr.toFixed(2)}%
-          Comisión Apertura: ${formatCurrency(openingFee)}
-          Coste Total del Proyecto (Capital + Todo): ${formatCurrency(totalProjectCost)}
+      //   //   Datos:
+      //   //   Capital solicitado: ${formatCurrency(input.amount)}
+      //   //   Financiado (Apertura/Seguro): ${formatCurrency(financedAmount)}
+      //   //   Cuota Base Préstamo: ${formatCurrency(baseMonthlyPayment)}
+      //   //   Gastos Mensuales (Seguros/Mant.): ${formatCurrency(input.recurringMonthlyCosts + additionalCostsFromApr)}/mes
+      //   //   Cuota Mensual Total: ${formatCurrency(totalEffectiveMonthly)}
+      //   //   TAE: ${bankApr.toFixed(2)}%
+      //   //   Comisión Apertura: ${formatCurrency(openingFee)}
+      //   //   Coste Total del Proyecto (Capital + Todo): ${formatCurrency(totalProjectCost)}
           
-          ${hasHiddenCosts ? `ALERTA: Se han detectado ${formatCurrency(totalHiddenCost)} en costes que elevan la TAE respecto al interés nominal.` : ''}
+      //   //   ${hasHiddenCosts ? `ALERTA: Se han detectado ${formatCurrency(totalHiddenCost)} en costes que elevan la TAE respecto al interés nominal.` : ''}
           
-          Tu análisis DEBE ser consistente con la valoración "${stats.label}".
-          Explica brevemente por qué sale esa cuota y da 2 consejos.`,
-        });
+      //   //   Tu análisis DEBE ser consistente con la valoración "${stats.label}".
+      //   //   Explica brevemente por qué sale esa cuota y da 2 consejos.`,
+      //   // });
         
-        setAiAnalysis(response.text || "No se pudo generar el análisis.");
-      } catch (error) {
-        console.error("AI Analysis error:", error);
-        setAiAnalysis("Error conectando con el asesor inteligente.");
-      } finally {
-        setLoading(false);
-      }
-    };
+      //   setAiAnalysis(response.text || "No se pudo generar el análisis.");
+      // } catch (error) {
+      //   console.error("AI Analysis error:", error);
+      //   setAiAnalysis("Error conectando con el asesor inteligente.");
+      // } finally {
+      //   setLoading(false);
+      // }
+    // };
 
-    fetchAiAnalysis();
-  }, [input.amount, input.annualInterestRate, input.termMonths, totalInterest, stats.label, stats.score, bankApr, input.recurringMonthlyCosts, additionalCostsFromApr]);
+    // fetchAiAnalysis();
+  // }, [input.amount, input.annualInterestRate, input.termMonths, totalInterest, stats.label, stats.score, bankApr, input.recurringMonthlyCosts, additionalCostsFromApr]);
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
         <div className="stat-card bg-white border border-border-base rounded-md p-5 flex flex-col shadow-sm border-t-2 border-t-primary">
           <span className="stat-label text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1 flex items-center justify-between">
             Cuota Mensual Total
@@ -140,7 +141,8 @@ export const LoanAnalysis: React.FC<LoanAnalysisProps> = ({ input, schedule }) =
           <span className="text-[10px] text-text-muted mt-2 font-medium">COSTE TOTAL: {formatCurrency(totalProjectCost)}</span>
         </div>
 
-        <div className="stat-card bg-white border border-border-base rounded-md p-5 flex flex-col shadow-sm col-span-1 md:col-span-2 lg:col-span-1 min-h-[120px]">
+        {/* TODO: Revisar integración con IA (No se ha implementado todavía)*/}
+        {/* <div className="stat-card bg-white border border-border-base rounded-md p-5 flex flex-col shadow-sm col-span-1 md:col-span-2 lg:col-span-1 min-h-[120px]">
           <span className="stat-label text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1 flex items-center gap-1.5">
             <Sparkles className="w-3 h-3 text-primary" />
             Análisis IA Smart
@@ -155,7 +157,7 @@ export const LoanAnalysis: React.FC<LoanAnalysisProps> = ({ input, schedule }) =
               {aiAnalysis}
             </div>
           )}
-        </div>
+        </div> */}
       </div>
 
       {(hasHiddenCosts || openingFee > 0) && (

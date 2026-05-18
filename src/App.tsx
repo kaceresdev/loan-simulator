@@ -169,7 +169,7 @@ export default function App() {
       <header className="h-[60px] bg-white border-b border-border-base sticky top-0 z-30 flex items-center justify-between px-6 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="logo font-bold text-primary text-xl tracking-tight">
-            FinSim Pro
+            SimularPréstamo.NET
           </div>
           <div className="h-4 w-[1px] bg-border-base mx-2" />
           <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest leading-none">
@@ -319,7 +319,8 @@ export default function App() {
               onSaveSuccess={(name, email) => setLoadedUser({ name, email })}
             />
 
-            <AdSpace type="horizontal" className="mt-2" />
+            {/* <AdSpace type="horizontal" className="mt-2" /> */}
+            {/* TODO: Revisar integración con Publicidad*/}
           </div>
 
           {!isSimulated ? (
@@ -334,7 +335,8 @@ export default function App() {
             <div className="flex flex-col gap-6 h-full">
               {simulatedInput && <LoanAnalysis input={simulatedInput} schedule={schedule} />}
               
-              <AdSpace type="horizontal" className="hidden lg:flex" />
+              {/* <AdSpace type="horizontal" className="hidden lg:flex" /> */}
+              {/* TODO: Revisar integración con Publicidad*/}
 
               <div className="flex flex-col gap-4 flex-1 overflow-hidden min-h-0">
                 <div className="flex items-center justify-between px-4 py-3 bg-white border border-border-base rounded-md">
@@ -367,7 +369,8 @@ export default function App() {
             </p>
           </div>
           
-          <AdSpace type="sidebar" />
+          {/* <AdSpace type="sidebar" /> */}
+          {/* TODO: Revisar integración con Publicidad*/}
           
           <div className="bg-primary/5 rounded-xl p-4 border border-primary/10">
             <h4 className="text-xs font-bold text-primary mb-1">Tip de Ahorro</h4>

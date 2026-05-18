@@ -1,0 +1,15 @@
+{
+  "hosting": {
+    "source": ".",
+    "ignore": ["firebase.json", "**/node_modules/**", "**/.git/**"],
+    "build": {
+      "command": "npm run build",
+      "output": ".next"
+    },
+    "frameworksBackend": {
+      "memory": "1GB",
+      "timeoutSeconds": 60,
+      "runtime": "nodejs20"
+    }
+  }
+}
